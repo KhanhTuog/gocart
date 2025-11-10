@@ -1,5 +1,6 @@
 'use client'
 
+// import { addToCart } from "@/lib/features/cart/cartSlice";
 import { addToCart } from "@/lib/features/cart/cartSlice";
 import { StarIcon, TagIcon, EarthIcon, CreditCardIcon, UserIcon } from "lucide-react";
 import { useRouter } from "next/navigation";

@@ -4,8 +4,14 @@ import { format } from "date-fns"
 import toast from "react-hot-toast"
 import { DeleteIcon } from "lucide-react"
 import { couponDummyData } from "@/assets/assets"
+import { useUser } from "@clerk/nextjs"
+import { useAuth } from "@clerk/clerk-react"
+import axios from "axios"
 
 export default function AdminCoupons() {
+
+    
+    const {getToken} = useAuth()
 
     const [coupons, setCoupons] = useState([])
 
@@ -20,12 +26,46 @@ export default function AdminCoupons() {
     })
 
     const fetchCoupons = async () => {
-        setCoupons(couponDummyData)
+        try {
+           const tokent = await getToken()
+           const {data} = await axios.get('/api/admin/coupon', {
+                headers: {
+                    Authorization: `Bearer ${tokent}`
+                }
+            })
+            setCoupons(data.coupons)
+        } catch (error) {
+            toast.error(error?.response?.data?.error || error.message)
+
+        }
     }
 
     const handleAddCoupon = async (e) => {
         e.preventDefault()
-        // Logic to add a coupon
+        try {
+            const token = await getToken()
+            newCoupon.discount = Number(newCoupon.discount)
+            newCoupon.expiresAt = new Date(newCoupon.expiresAt)
+            const {data} = await axios.post('/api/admin/coupon', { coupon: newCoupon }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            toast.success(data.message)
+            await fetchCoupons()
+            setNewCoupon({
+            code: '',
+            description: '',
+            discount: '',
+            forNewUser: false,
+            forMember: false,
+            isPublic: false,
+            expiresAt: new Date()
+        })
+        }
+        catch (error) {
+            toast.error(error?.response?.data?.error || error.message)
+        }
 
 
     }
@@ -35,7 +75,21 @@ export default function AdminCoupons() {
     }
 
     const deleteCoupon = async (code) => {
-        // Logic to delete a coupon
+        // Logic to delete a 
+        try {
+            const confirm = window.confirm("Are you sure you want to delete this coupon?")
+            if (!confirm) return;
+            const token = await getToken()
+            const {data} = await axios.delete(`/api/admin/coupon?code=${code}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            toast.success(data.message)
+            await fetchCoupons()
+        } catch (error) {
+            toast.error(error?.response?.data?.error || error.message)
+        }
 
 
     }
