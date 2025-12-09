@@ -219,7 +219,7 @@ export async function POST(request) {
   }
 }
 
-// ✅ API GET để lấy status thủ công (nếu cần)
+//  API GET để lấy status thủ công (nếu cần)
 export async function GET(request) {
   try {
     const { userId } = getAuth(request);

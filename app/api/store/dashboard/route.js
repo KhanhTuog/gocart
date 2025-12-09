@@ -4,7 +4,7 @@ import { getAuth } from "@clerk/nextjs/server";
 import  { NextResponse  } from "next/server";
 
 // get dashboard data for seller
-export async function POST(request) {
+export async function GET(request) {
     try {
         const { userId } = getAuth(request);
         const storeId = await authSeller(userId);
@@ -21,8 +21,8 @@ export async function POST(request) {
 
         const ratings = await prisma.rating.findMany({
             where: {
-                productID: { in: products.map( (product) => product.id ) } 
-            }, include: { user: true, products: true}
+                productId: { in: products.map( (product) => product.id ) } 
+            }, include: { user: true, product: true}
         });
 
         const dashboardData = {
@@ -33,7 +33,7 @@ export async function POST(request) {
         };  
         return NextResponse.json( dashboardData );
     } catch (error) {
-        console.error( error);
+        console.error('Error in GET /api/store/dashboard:', error);
         return NextResponse.json({error: error.code || error.message }, { status: 400 });
     }
 }

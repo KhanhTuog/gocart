@@ -2,6 +2,10 @@
 import { useEffect, useState } from "react"
 import Loading from "@/components/Loading"
 import { orderDummyData } from "@/assets/assets"
+import { useAuth } from "@clerk/nextjs"
+import axios from "axios"
+import toast from "react-hot-toast"
+import { set } from "date-fns"
 
 export default function StoreOrders() {
     const [orders, setOrders] = useState([])
@@ -9,14 +13,42 @@ export default function StoreOrders() {
     const [selectedOrder, setSelectedOrder] = useState(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
 
+    const {getToken} = useAuth();
+
 
     const fetchOrders = async () => {
-       setOrders(orderDummyData)
-       setLoading(false)
+       try {
+            const token = await getToken()
+            const {data} = await axios.get('/api/store/orders', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            setOrders(data.orders)
+           
+       } catch (error) {
+            toast.error(error.response?.data?.error || error.message)
+       }finally {
+            setLoading(false)
+       }
     }
 
     const updateOrderStatus = async (orderId, status) => {
-        // Logic to update the status of an order
+        try {
+            const token = await getToken()
+            const {data} = await axios.post('/api/store/orders',{orderId, status}, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            setOrders(prevOrders => prevOrders.map(order => order.id === orderId ? {...order, status} : order))
+            toast.success(data.message)
+           
+       } catch (error) {
+            toast.error(error.response?.data?.error || error.message)
+       }finally {
+            setLoading(false)
+       }
 
 
     }
@@ -68,7 +100,8 @@ export default function StoreOrders() {
                                     <td className="px-4 py-3">
                                         {order.isCouponUsed ? (
                                             <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">
-                                                {order.coupon?.code}
+                                                {order.coupon}
+                                                {/* {console.log(order)} */}
                                             </span>
                                         ) : (
                                             "—"
@@ -139,8 +172,9 @@ export default function StoreOrders() {
                             <p><span className="text-green-700">Payment Method:</span> {selectedOrder.paymentMethod}</p>
                             <p><span className="text-green-700">Paid:</span> {selectedOrder.isPaid ? "Yes" : "No"}</p>
                             {selectedOrder.isCouponUsed && (
-                                <p><span className="text-green-700">Coupon:</span> {selectedOrder.coupon.code} ({selectedOrder.coupon.discount}% off)</p>
+                                <p><span className="text-green-700">Coupon:</span> {selectedOrder.coupon} (% off)</p>
                             )}
+                           
                             <p><span className="text-green-700">Status:</span> {selectedOrder.status}</p>
                             <p><span className="text-green-700">Order Date:</span> {new Date(selectedOrder.createdAt).toLocaleString()}</p>
                         </div>

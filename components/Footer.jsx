@@ -32,9 +32,9 @@ const Footer = () => {
         {
             title: "CONTACT",
             links: [
-                { text: "+1-212-456-7890", path: '/', icon: MailIcon },
-                { text: "contact@example.com", path: '/', icon: PhoneIcon },
-                { text: "794 Francisco, 94102", path: '/', icon: MapPinIcon }
+                { text: "0387816916", path: '/', icon: MailIcon },
+                { text: "tuongnk.21it@vku.udn.com", path: '/', icon: PhoneIcon },
+                { text: "Dong Ha, Quang Tri Province", path: '/', icon: MapPinIcon }
             ]
         }
     ];
@@ -79,9 +79,7 @@ const Footer = () => {
                         ))}
                     </div>
                 </div>
-                <p className="py-4 text-sm text-slate-500">
-                    Copyright 2025 © gocart All Right Reserved.
-                </p>
+                
             </div>
         </footer>
     );
