@@ -7,7 +7,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 export async function POST(request) {
     try {
         const body = await request.text();
-        const signature = request.get('Stripe-Signature'); 
+        const signature = request.headers.get('Stripe-Signature'); 
         const event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET);
 
         const handlePaymentIntent = async (paymentIntentId, isPaid) => {
