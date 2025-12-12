@@ -9,9 +9,9 @@ const nextConfig = {
       },
     ],
   },
-  experimental: {
-    disableOptimizedSecurityChecks: true,
-  },
+  // experimental: {
+  //   disableOptimizedSecurityChecks: true,
+  // },
 };
 
 export default nextConfig;
