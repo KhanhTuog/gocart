@@ -16,7 +16,7 @@ export async function POST(request) {
             });
             const {orderIds, userId, appId} = session.data[0].metadata;
 
-            if(appID !== 'gocart'){
+            if(appId !== 'gocart'){
             return NextResponse.json({ received: true,message: "Invalid app id" });
             }
             const orderIdsArray = orderIds.split(',');
@@ -28,7 +28,7 @@ export async function POST(request) {
                     });
                 }))
                 //delete cart from user
-                await prismat.user.update({
+                await prisma.user.update({
                     where: { id: userId },
                     data: { cart: [] }
                 });
